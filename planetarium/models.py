@@ -5,7 +5,11 @@ from django.db import models
 class AstronomyShow(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    show_themes = models.ManyToManyField("ShowTheme", blank=True,  related_name="astronomy_shows")
+    show_themes = models.ManyToManyField(
+        "ShowTheme",
+        blank=True,
+        related_name="astronomy_shows",
+    )
 
     def __str__(self):
         return self.title
@@ -22,6 +26,10 @@ class PlanetariumDome(models.Model):
     name = models.CharField(max_length=200)
     rows = models.PositiveIntegerField()
     seats_in_row = models.PositiveIntegerField()
+
+    @property
+    def capacity(self):
+        return self.rows * self.seats_in_row
 
     def __str__(self):
         return self.name

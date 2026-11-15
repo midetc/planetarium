@@ -10,7 +10,8 @@ class ShowThemeSerializer(serializers.ModelSerializer):
 
 
 class PlanetariumDomeSerializer(serializers.ModelSerializer):
+    capacity = serializers.ReadOnlyField()
+
     class Meta:
         model = PlanetariumDome
-        fields = ("id", "name", "rows", "seats_in_row")
-
+        fields = ("id", "name", "rows", "seats_in_row", "capacity")
