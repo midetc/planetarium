@@ -1,5 +1,17 @@
+import os
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.text import slugify
+
+
+def create_custom_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+    return os.path.join(
+        "uploads/images/",
+        f"{slugify(instance.title)}-{uuid.uuid4()}{extension}",
+    )
 
 
 class AstronomyShow(models.Model):
@@ -10,6 +22,7 @@ class AstronomyShow(models.Model):
         blank=True,
         related_name="astronomy_shows",
     )
+    image = models.ImageField(upload_to=create_custom_path, blank=True, null=True)
 
     def __str__(self):
         return self.title
