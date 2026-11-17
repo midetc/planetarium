@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" agent="planetarium">
+  <diagram id="planetarium-db" name="Planetarium database">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="user" value="User" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="220" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="user-f" value="id  PK&#xa;email  UK&#xa;password&#xa;is_staff&#xa;is_active&#xa;is_superuser" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="user">
+          <mxGeometry y="28" width="220" height="132" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="theme" value="ShowTheme" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="220" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="theme-f" value="id  PK&#xa;name  UK" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="theme">
+          <mxGeometry y="28" width="220" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="show" value="AstronomyShow" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="250" width="240" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="show-f" value="id  PK&#xa;title&#xa;description&#xa;image  (nullable)" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="show">
+          <mxGeometry y="28" width="240" height="112" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dome" value="PlanetariumDome" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;html=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="40" width="240" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="dome-f" value="id  PK&#xa;name&#xa;rows&#xa;seats_in_row&#xa;capacity is computed, not stored" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="dome">
+          <mxGeometry y="28" width="240" height="102" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="session" value="ShowSession" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;html=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="280" width="260" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="session-f" value="id  PK&#xa;astronomy_show_id  FK&#xa;planetarium_dome_id  FK&#xa;show_time" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="session">
+          <mxGeometry y="28" width="260" height="102" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="reservation" value="Reservation" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#f8cecc;strokeColor=#b85450;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="520" width="240" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="reservation-f" value="id  PK&#xa;created_at&#xa;user_id  FK" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="reservation">
+          <mxGeometry y="28" width="240" height="92" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ticket" value="Ticket" style="swimlane;fontStyle=1;align=center;startSize=28;fillColor=#f8cecc;strokeColor=#b85450;html=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="540" width="280" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="ticket-f" value="id  PK&#xa;row&#xa;seat&#xa;show_session_id  FK&#xa;reservation_id  FK&#xa;unique (show_session, row, seat)" style="text;html=1;strokeColor=none;fillColor=none;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="ticket">
+          <mxGeometry y="28" width="280" height="142" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m2m" value="AstronomyShow_show_themes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="360" y="80" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-m2m-theme" style="endArrow=none;html=1;strokeWidth=1;" edge="1" parent="1" source="theme" target="m2m">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-m2m-show" style="endArrow=none;html=1;strokeWidth=1;" edge="1" parent="1" source="m2m" target="show">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-show-session" value="1        n" style="endArrow=block;html=1;strokeWidth=1;" edge="1" parent="1" source="show" target="session">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-dome-session" value="1        n" style="endArrow=block;html=1;strokeWidth=1;" edge="1" parent="1" source="dome" target="session">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-session-ticket" value="1        n" style="endArrow=block;html=1;strokeWidth=1;" edge="1" parent="1" source="session" target="ticket">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-reservation-ticket" value="1        n" style="endArrow=block;html=1;strokeWidth=1;" edge="1" parent="1" source="reservation" target="ticket">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-user-reservation" value="1        n" style="endArrow=block;html=1;strokeWidth=1;" edge="1" parent="1" source="user" target="reservation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
