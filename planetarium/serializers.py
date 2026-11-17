@@ -9,7 +9,8 @@ from planetarium.models import (
     PlanetariumDome,
     AstronomyShow,
     ShowSession,
-    Ticket, Reservation,
+    Ticket,
+    Reservation,
 )
 
 
@@ -62,8 +63,14 @@ class ItemImageSerializer(serializers.ModelSerializer):
 
 
 class ShowSessionListSerializer(serializers.ModelSerializer):
-    astronomy_show = serializers.SlugRelatedField(slug_field="title", read_only=True, )
-    planetarium_dome = serializers.SlugRelatedField(slug_field="name", read_only=True, )
+    astronomy_show = serializers.SlugRelatedField(
+        slug_field="title",
+        read_only=True,
+    )
+    planetarium_dome = serializers.SlugRelatedField(
+        slug_field="name",
+        read_only=True,
+    )
     tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -77,7 +84,6 @@ class ShowSessionListSerializer(serializers.ModelSerializer):
         )
 
 
-
 class TicketSeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -87,7 +93,11 @@ class TicketSeatSerializer(serializers.ModelSerializer):
 class ShowSessionDetailSerializer(serializers.ModelSerializer):
     planetarium_dome = PlanetariumDomeSerializer()
     astronomy_show = AstronomyShowDetailSerializer()
-    taken_places = TicketSeatSerializer(source="tickets", many=True, read_only=True)
+    taken_places = TicketSeatSerializer(
+        source="tickets",
+        many=True,
+        read_only=True
+    )
 
     class Meta:
         model = ShowSession
@@ -109,7 +119,11 @@ class ShowSessionCreateSerializer(serializers.ModelSerializer):
 class TicketCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ("row", "seat", "show_session",)
+        fields = (
+            "row",
+            "seat",
+            "show_session",
+        )
 
     def validate(self, attrs: Any) -> Any:
         show_session = attrs.get("show_session")
@@ -122,12 +136,14 @@ class TicketCreateSerializer(serializers.ModelSerializer):
         if show_session.tickets.filter(row=row, seat=seat).exists():
             raise serializers.ValidationError("This seat is already taken")
         if show_session.show_time < timezone.now():
-            raise serializers.ValidationError("This show session has already started")
+            raise serializers.ValidationError(
+                "This show session has already started"
+            )
         return attrs
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    tickets = TicketCreateSerializer(many=True)
+    tickets = TicketCreateSerializer(many=True, allow_empty=False)
 
     class Meta:
         model = Reservation
@@ -150,8 +166,8 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def save(self, **kwargs: Any):
-            tickets = self.validated_data.pop("tickets")
-            reservation = super().save(user=self.context["request"].user)
-            for ticket in tickets:
-                Ticket.objects.create(reservation=reservation, **ticket)
-            return reservation
+        tickets = self.validated_data.pop("tickets")
+        reservation = super().save(user=self.context["request"].user)
+        for ticket in tickets:
+            Ticket.objects.create(reservation=reservation, **ticket)
+        return reservation

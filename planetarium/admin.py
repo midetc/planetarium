@@ -5,7 +5,8 @@ from planetarium.models import (
     AstronomyShow,
     PlanetariumDome,
     ShowSession,
-    Reservation, Ticket,
+    Reservation,
+    Ticket,
 )
 
 
@@ -18,4 +19,3 @@ from planetarium.models import (
 @admin.register(Ticket)
 class ModelAdmin(admin.ModelAdmin):
     pass
-

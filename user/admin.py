@@ -10,16 +10,24 @@ class ModUserAdmin(UserAdmin):
     list_display = ("email", "is_staff")
     add_fieldsets = (
         (
-            None, {
-            'fields': ('email', 'password1', 'password2'),
-        },
+            None,
+            {
+                "fields": ("email", "password1", "password2"),
+            },
         ),
     )
     fieldsets = (
         (
-            None, {
-            'fields': ('email', 'password', 'is_staff', "is_active", "is_superuser"),
-        },
+            None,
+            {
+                "fields": (
+                    "email",
+                    "password",
+                    "is_staff",
+                    "is_active",
+                    "is_superuser",
+                ),
+            },
         ),
     )
 

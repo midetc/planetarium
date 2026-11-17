@@ -4,7 +4,11 @@ from django.db.models import Count, F
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import (
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin
+)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -88,13 +92,12 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 "astronomy_show",
                 type={"type": "list", "items": {"type": "number"}},
-                description="Filtering by astronomy show ids"
-            )
+                description="Filtering by astronomy show ids",
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
 
     def get_queryset(self):
         queryset = self.queryset
@@ -105,18 +108,21 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(show_time__date=date_filter)
 
         if astronomy_show_filter:
-            astronomy_show_ids = [int(str_id) for str_id in
-                astronomy_show_filter.split(",")]
-            queryset = queryset.filter(astronomy_show__id__in=astronomy_show_ids)
+            astronomy_show_ids = [
+                int(str_id) for str_id in astronomy_show_filter.split(",")
+            ]
+            queryset = queryset.filter(
+                astronomy_show__id__in=astronomy_show_ids
+            )
 
         if self.action == "list":
             queryset = (
-                queryset
-                .select_related("planetarium_dome")
-                .annotate(
-                    tickets_available=F("planetarium_dome__rows") * F(
+                queryset.select_related("planetarium_dome").annotate(
+                    tickets_available=F("planetarium_dome__rows")
+                    * F(
                         "planetarium_dome__seats_in_row",
-                    ) - Count("tickets"),
+                    )
+                    - Count("tickets"),
                 )
             ).order_by("id")
         return queryset
@@ -147,4 +153,5 @@ class ReservationViewSet(
     pagination_class = PaginationClass
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return (self.queryset.filter(user=self.request.user)
+                .order_by("-created_at"))
