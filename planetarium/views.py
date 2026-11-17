@@ -1,10 +1,18 @@
 from django.db.models import Count, F
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from planetarium.models import ShowTheme, PlanetariumDome, AstronomyShow, ShowSession
+from planetarium.models import (
+    ShowTheme,
+    PlanetariumDome,
+    AstronomyShow,
+    ShowSession,
+    Reservation,
+)
 from planetarium.permissions import IsAdminOrAuthenticatedReadOnly
 from planetarium.serializers import (
     ShowThemeSerializer,
@@ -14,7 +22,10 @@ from planetarium.serializers import (
     AstronomyShowCreateSerializer,
     ItemImageSerializer,
     ShowSessionListSerializer,
-    ShowSessionCreateSerializer, ShowSessionDetailSerializer,
+    ShowSessionCreateSerializer,
+    ShowSessionDetailSerializer,
+    TicketSerializer,
+    ReservationSerializer,
 )
 
 
@@ -95,3 +106,24 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             return ShowSessionDetailSerializer
         return ShowSessionCreateSerializer
+
+
+class PaginationClass(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class ReservationViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = PaginationClass
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)

@@ -101,3 +101,5 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.show_session} - Row {self.row}, Seat {self.seat}"
+
+
