@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import serializers
 
 from planetarium.models import (
@@ -76,6 +77,7 @@ class ShowSessionListSerializer(serializers.ModelSerializer):
         )
 
 
+
 class TicketSeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -119,6 +121,8 @@ class TicketCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid seat number")
         if show_session.tickets.filter(row=row, seat=seat).exists():
             raise serializers.ValidationError("This seat is already taken")
+        if show_session.show_time < timezone.now():
+            raise serializers.ValidationError("This show session has already started")
         return attrs
 
 

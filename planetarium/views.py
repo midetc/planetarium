@@ -1,4 +1,7 @@
+from datetime import date
+
 from django.db.models import Count, F
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
@@ -24,7 +27,6 @@ from planetarium.serializers import (
     ShowSessionListSerializer,
     ShowSessionCreateSerializer,
     ShowSessionDetailSerializer,
-    TicketSerializer,
     ReservationSerializer,
 )
 
@@ -74,6 +76,25 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
 class ShowSessionViewSet(viewsets.ModelViewSet):
     queryset = ShowSession.objects.all()
     permission_classes = (IsAdminOrAuthenticatedReadOnly,)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "date",
+                type=date,
+                description="Filtering by date…",
+                required=False,
+            ),
+            OpenApiParameter(
+                "astronomy_show",
+                type={"type": "list", "items": {"type": "number"}},
+                description="Filtering by astronomy show ids"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
     def get_queryset(self):
         queryset = self.queryset
